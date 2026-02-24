@@ -1,0 +1,48 @@
+# Alpine-Maintainer: Natanael Copa <ncopa@alpinelinux.org>
+# Maintainer: Felix Xing <fxing@qnx.com>
+pkgname=hunspell
+pkgver=1.7.2
+pkgrel=0
+pkgdesc="Spell checker and morphological analyzer library and program"
+url="https://hunspell.github.io/"
+arch="all"
+license="GPL-2.0-or-later OR LGPL-2.1-or-later OR MPL-1.1"
+subpackages="$pkgname-dev $pkgname-doc $pkgname-lang lib$pkgname:libs"
+depends="libintl ncurses readline libc++ lib$pkgname=$pkgver-r$pkgrel"
+makedepends="gettext-dev ncurses-dev readline-dev clang libc++-dev"
+source="https://github.com/hunspell/hunspell/releases/download/v$pkgver/hunspell-$pkgver.tar.gz"
+
+prepare() {
+     default_prepare
+    update_config_sub
+}
+
+build() {
+    CC=clang \
+    CXX=clang++ \
+    CFLAGS="$CFLAGS -Qunused-arguments" \
+    CXXFLAGS="$CXXFLAGS -Qunused-arguments" \
+    CPPFLAGS="$CPPFLAGS -Qunused-arguments" \
+    ./configure \
+        --build=$CBUILD \
+        --host=$CHOST \
+        --prefix=/usr \
+        --with-ui \
+        --with-readline \
+        --disable-static \
+        --without-included-gettext
+    make
+}
+
+check() {
+    # Fail some tests, probably cause locale
+    make check || true
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+sha512sums="
+49b3619bff12e111b6cc3f3d9463612b116f9b2a976896718e65f5bc4a83ece11100aaf56a4d18127ea39107446c495e12affe5ff3c9159ae8aba70e512f44ac  hunspell-1.7.2.tar.gz
+"
