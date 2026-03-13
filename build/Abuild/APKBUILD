@@ -2,7 +2,7 @@
 # Maintainer: Felix Xing <fxing@qnx.com>
 pkgname=hunspell
 pkgver=1.7.2
-pkgrel=0
+pkgrel=${pkgrel:-0}
 pkgdesc="Spell checker and morphological analyzer library and program"
 url="https://hunspell.github.io/"
 arch="all"
@@ -43,6 +43,7 @@ package() {
     make DESTDIR="$pkgdir" install
 }
 
+options="$options ${DISABLE_CHECK:+!check}"
 sha512sums="
 49b3619bff12e111b6cc3f3d9463612b116f9b2a976896718e65f5bc4a83ece11100aaf56a4d18127ea39107446c495e12affe5ff3c9159ae8aba70e512f44ac  hunspell-1.7.2.tar.gz
 "
